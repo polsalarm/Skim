@@ -19,11 +19,11 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [state, setState] = useState<State>({ kind: "idle" });
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const trimmed = url.trim();
+  async function analyze(targetUrl: string) {
+    const trimmed = targetUrl.trim();
     if (!trimmed) return;
 
+    setUrl(trimmed);
     setState({ kind: "loading", url: trimmed });
 
     try {
@@ -52,6 +52,11 @@ export default function Home() {
           err instanceof Error ? err.message : "Network error. Please retry.",
       });
     }
+  }
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    analyze(url);
   }
 
   const busy = state.kind === "loading";
@@ -108,20 +113,24 @@ export default function Home() {
         {state.kind === "idle" && (
           <Card>
             <CardContent className="p-6 flex flex-col gap-2">
-              <p className="text-sm font-medium">Try one of these:</p>
+              <p className="text-sm font-medium">
+                Try one of these (click to analyze):
+              </p>
               <div className="flex flex-wrap gap-2">
                 {EXAMPLES.map((ex) => (
                   <button
                     key={ex.url}
-                    onClick={() => setUrl(ex.url)}
-                    className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-card transition-colors"
+                    onClick={() => analyze(ex.url)}
+                    disabled={busy}
+                    className="text-xs px-3 py-1.5 rounded-full border border-border bg-muted hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors disabled:opacity-50"
                   >
                     {ex.label}
                   </button>
                 ))}
               </div>
               <p className="text-xs text-muted-foreground mt-2">
-                Works with any YouTube video that has captions enabled.
+                Or paste any public YouTube URL above. Shorter videos
+                (&lt; 30 min) analyze fastest.
               </p>
             </CardContent>
           </Card>
@@ -166,15 +175,11 @@ export default function Home() {
 
 const EXAMPLES = [
   {
-    label: "Steve Jobs · Stanford '05",
+    label: "Steve Jobs · Stanford '05 (15 min)",
     url: "https://www.youtube.com/watch?v=UF8uR6Z6KLc",
   },
   {
-    label: "Tim Urban · TED Talk",
+    label: "Tim Urban · Procrastination TED (14 min)",
     url: "https://www.youtube.com/watch?v=arj7oStGLkU",
-  },
-  {
-    label: "Andrej Karpathy · LLM intro",
-    url: "https://www.youtube.com/watch?v=zjkBMFhNj_g",
   },
 ];
