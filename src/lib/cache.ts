@@ -19,31 +19,31 @@ export function setCached(videoId: string, result: AnalysisResult): void {
   store.set(videoId, { ...result, expiresAt: Date.now() + TTL_MS });
 }
 
-type TranscriptCacheEntry = {
+type SourceCacheEntry = {
   metadata: VideoMetadata;
-  transcript: TranscriptSegment[];
+  transcript?: TranscriptSegment[];
   expiresAt: number;
 };
-const transcriptStore = new Map<string, TranscriptCacheEntry>();
+const sourceStore = new Map<string, SourceCacheEntry>();
 
-export function getCachedTranscript(
+export function getCachedSource(
   videoId: string,
-): { metadata: VideoMetadata; transcript: TranscriptSegment[] } | null {
-  const entry = transcriptStore.get(videoId);
+): { metadata: VideoMetadata; transcript?: TranscriptSegment[] } | null {
+  const entry = sourceStore.get(videoId);
   if (!entry) return null;
   if (entry.expiresAt < Date.now()) {
-    transcriptStore.delete(videoId);
+    sourceStore.delete(videoId);
     return null;
   }
   return { metadata: entry.metadata, transcript: entry.transcript };
 }
 
-export function setCachedTranscript(
+export function setCachedSource(
   videoId: string,
   metadata: VideoMetadata,
-  transcript: TranscriptSegment[],
+  transcript?: TranscriptSegment[],
 ): void {
-  transcriptStore.set(videoId, {
+  sourceStore.set(videoId, {
     metadata,
     transcript,
     expiresAt: Date.now() + TTL_MS,

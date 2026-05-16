@@ -26,7 +26,7 @@ export type Chapter = {
 
 export type AnalysisResult = {
   metadata: VideoMetadata;
-  transcript: TranscriptSegment[];
+  transcript?: TranscriptSegment[];
   summary: {
     tldr: string;
     overview: string;

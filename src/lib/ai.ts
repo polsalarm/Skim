@@ -33,6 +33,17 @@ export const CHAT_MODEL: LanguageModel = pickModel(
   "openai/gpt-5-mini",
 );
 
+/**
+ * Whether the active provider is Google Gemini.
+ *
+ * When true, we can pass YouTube URLs directly to the model as file parts —
+ * Gemini downloads and processes the video itself, bypassing YouTube's
+ * blocking of datacenter IPs.
+ */
+export const IS_GOOGLE_PROVIDER = Boolean(
+  process.env.GOOGLE_GENERATIVE_AI_API_KEY && !process.env.AI_GATEWAY_API_KEY,
+);
+
 export const MAX_TRANSCRIPT_CHARS = 120_000;
 
 export function truncateTranscript(text: string): {

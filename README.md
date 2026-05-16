@@ -12,8 +12,15 @@ auto-caption transcript.
 - **URL ingestion** — paste any YouTube URL (`watch`, `shorts`, `youtu.be`,
   `embed`, or a raw 11-char video ID)
 - **Metadata** via the YouTube oEmbed endpoint (no API key required)
-- **Transcripts** via [`youtube-transcript`](https://www.npmjs.com/package/youtube-transcript)
-  (auto-captions only — videos without captions are gracefully rejected)
+- **Video ingestion** — works two ways depending on provider:
+  - **Google Gemini (recommended):** YouTube URL is passed directly to Gemini as a
+    file part. Gemini downloads and processes the actual video — works on any
+    host, works even for videos without captions, extracts real timestamps.
+  - **Other providers (fallback):** Transcript scraping via
+    [`youtube-transcript`](https://www.npmjs.com/package/youtube-transcript).
+    **Warning:** YouTube blocks most datacenter IPs (Vercel, AWS, etc.), so
+    this path typically fails in production. Use the Gemini path for any
+    deployed environment.
 - **AI analysis** with structured output (Zod schema + `generateText` + `Output.object`):
   - TL;DR + multi-paragraph overview
   - 5–8 key takeaways
